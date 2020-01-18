@@ -34,7 +34,7 @@ all: $(all) clean
 
 .SUFFIXES: .exe .c
 
-$(all): $(all:.exe=.o)
+$(all):
 	$(CC) $*.c $(CFLAGS)
 
 clean:
