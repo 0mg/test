@@ -1,0 +1,39 @@
+#pragma code_page(65001)
+#include "main.h"
+
+ID_DLG_MAIN DIALOG 0, 0, 200, 150
+FONT 9, "MS Shell Dlg"
+STYLE WS_SYSMENU | WS_MINIMIZEBOX | WS_VISIBLE | DS_CENTER
+CLASS C_STR_CLASS_MAIN
+CAPTION "Main Dialog" {
+  CONTROL "💤", ID_TXT_MISSION, "STATIC", SS_LEFT, 10, 10, 180, 20
+  CONTROL "--:--:--", ID_TXT_TIMER, "STATIC", SS_CENTER, 0, 35, 200, 50
+  CONTROL "", ID_PB_MAIN, PROGRESS_CLASS, PBS_SMOOTH | PBS_SMOOTHREVERSE, 10, 90, 180, 15
+  DEFPUSHBUTTON "キャンセル", IDCANCEL, 140, 110, 50, 15
+}
+
+ID_MNU_MAIN MENU {
+  POPUP "&File" {
+    MENUITEM "New...", 0x0002
+    MENUITEM SEPARATOR
+    MENUITEM "Export link...", 0x0003
+    MENUITEM SEPARATOR
+    MENUITEM "Exit", C_CMD_EXIT
+  }
+  POPUP "&Tool" {
+    MENUITEM "Keep awaking PC until timeout", C_CMD_AWAKEN
+    MENUITEM SEPARATOR
+    MENUITEM "Display power off", C_CMD_DISPOFF
+  }
+  POPUP "&Help" {
+    MENUITEM "Manual...", 0x0006
+    MENUITEM SEPARATOR
+    MENUITEM "About...", 0x0007
+  }
+}
+
+STRINGTABLE {
+  C_LANG_JA | C_CMD_EXIT "終了"
+  C_LANG_JA | C_CMD_AWAKEN "システムによるスリープを抑止"
+  C_LANG_JA | C_CMD_DISPOFF "画面の電源を切る"
+}
