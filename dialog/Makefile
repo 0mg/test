@@ -13,8 +13,7 @@ GCRM = $(AR:%=rm -f)
 # VS
 _LIBS = $(LIBS) %
 _VSLIBS = $(_LIBS: =.lib )
-_VSFLAGS = /utf-8 /DUNICODE /MD /O2 /link /ENTRY:__start__ $(_VSLIBS:%=)
-_Q = /manifestdependency:"type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='x86' publicKeyToken='6595b64144ccf1df' language='*'" $(_VSLIBS:%=)
+_VSFLAGS = /utf-8 /DUNICODE /MD /O2 /link /ENTRY:__start__ $(_VSLIBS:%=) /manifestdependency:"type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='x86' publicKeyToken='6595b64144ccf1df' language='*'" $(_VSLIBS:%=)
 _VSRC = rc
 _VSRFLAGS = /fo $*.o
 _VSRM = del /f

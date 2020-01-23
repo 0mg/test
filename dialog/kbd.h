@@ -25,7 +25,7 @@ public:
   void assign(WORD id, char key, BYTE mod) {
     if (entries >= sizeof(hotkeylist) / sizeof(HOTKEYDATA)) {
       SetLastError(ERROR_VOLMGR_MAXIMUM_REGISTERED_USERS);
-      popError(NULL);
+      MessageBox(NULL, TEXT("ERROR: Hotkey.assign() MAXIMUM"), NULL, MB_OK);
       return;
     }
     HOTKEYDATA *tgt = &hotkeylist[entries++];

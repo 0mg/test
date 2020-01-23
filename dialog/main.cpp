@@ -1,3 +1,4 @@
+#include "debug.h"
 #include "main.h"
 #include "kbd.h"
 
@@ -5,10 +6,27 @@ void __start__(void) {
   ExitProcess(WinMain(GetModuleHandle(NULL), 0, NULL, 0));
 }
 
+void registerHotkeys() {
+  Hotkey.assign(C_CMD_EXIT, VK_ESCAPE, 0);
+  Hotkey.assign(C_CMD_DISPOFF, 'B', C_KBD_CTRL);
+  Hotkey.assign(C_CMD_NEW, 'N', C_KBD_CTRL);
+  Hotkey.assign(C_CMD_SAVEAS, 'E', C_KBD_CTRL);
+  Hotkey.assign(C_CMD_AWAKEN, 'A', C_KBD_CTRL);
+  Hotkey.assign(C_CMD_STOP, VK_RETURN, 0);
+}
+
 void modifyMenu(HMENU menu, WORD lang) {
+  setMenuText(menu, C_STR_FILE, lang, 1);
+  setMenuText(menu, C_STR_CTRL, lang, 2);
+  setMenuText(menu, C_STR_TOOL, lang, 3);
   setMenuText(menu, C_CMD_EXIT, lang);
+  setMenuText(menu, C_CMD_STOP, lang);
   setMenuText(menu, C_CMD_DISPOFF, lang);
   setMenuText(menu, C_CMD_AWAKEN, lang);
+  setMenuText(menu, C_CMD_NEW, lang);
+  setMenuText(menu, C_CMD_SAVEAS, lang);
+  setMenuText(menu, C_CMD_ABOUT, lang);
+  setMenuText(menu, C_CMD_MANUAL, lang);
 }
 
 BOOL CALLBACK winproc1(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp) {
@@ -44,8 +62,7 @@ static HMENU pop1;
   switch (msg) {
   case WM_CREATE: {
     // MENU & LANG & HOTKEY
-    Hotkey.assign(C_CMD_EXIT, 'Q', C_KBD_CTRL);
-    Hotkey.assign(C_CMD_DISPOFF, 'B', C_KBD_CTRL);
+    registerHotkeys();
     switch (LANGIDFROMLCID(GetUserDefaultLCID())) {
     case 0x0411: langtype = C_LANG_JA; break;
     default: langtype = C_LANG_DEFAULT; break;
@@ -60,10 +77,22 @@ static HMENU pop1;
       HFONT font = CreateFont(75, 0, 0, 0, FW_SEMIBOLD, 0, 0, 0, DEFAULT_CHARSET, 0, 0, 0, FIXED_PITCH, L"MS Shell Dlg");
       SendMessage(ctx, WM_SETFONT, (WPARAM)font, TRUE);
       SetWindowText(ctx, L"1:30:58");
+      // mission
       ctx = GetDlgItem(hwnd, ID_TXT_MISSION);
       font = CreateFont(12, 0, 0, 0, 0, 0, 0, 0, DEFAULT_CHARSET, 0, 0, 0, FIXED_PITCH, L"MS Shell Dlg");
       SendMessage(ctx, WM_SETFONT, (WPARAM)font, TRUE);
-      SetWindowText(ctx, L"スリープ状態に移行します");
+      SetWindowText(ctx, L"コンピュータを眠らせます");
+      // icons
+      font = CreateFont(29, 0, 0, 0, 0, 0, 0, 0, DEFAULT_CHARSET, 0, 0, 0, FIXED_PITCH, L"MS Shell Dlg");
+      ctx = GetDlgItem(hwnd, ID_ICO_MISSION);
+      SendMessage(ctx, WM_SETFONT, (WPARAM)font, TRUE);
+      ctx = GetDlgItem(hwnd, ID_ICO_AWAKEN);
+      SendMessage(ctx, WM_SETFONT, (WPARAM)font, TRUE);
+      ctx = GetDlgItem(hwnd, ID_ICO_DEBUG);
+      SendMessage(ctx, WM_SETFONT, (WPARAM)font, TRUE);
+      ctx = GetDlgItem(hwnd, ID_ICO_EXTRA);
+      SendMessage(ctx, WM_SETFONT, (WPARAM)font, TRUE);
+      // progress bar
       HWND probar = GetDlgItem(hwnd, ID_PB_MAIN);
       SendMessage(probar, PBM_SETRANGE32, 0, 60000);
       SendMessage(probar, PBM_SETSTEP, -1000, 0);
@@ -74,9 +103,9 @@ static HMENU pop1;
   }
   case WM_COMMAND: {
     switch (LOWORD(wp)) {
-    case IDOK: break;
-    case IDCANCEL: break;
-    case C_CMD_EXIT: DestroyWindow(hwnd); break;
+    case C_CMD_STOP: MessageBox(hwnd, L"停止", 0, 0); break;
+    case C_CMD_AWAKEN: MessageBox(hwnd, L"目覚め", 0, 0); break;
+    case C_CMD_EXIT: MessageBox(hwnd,L"終了?",0,1)==1&&DestroyWindow(hwnd); break;
     case C_CMD_DISPOFF: MessageBox(hwnd, L"ブラックアウト！", 0, 0); break;
     }
     HWND probar = GetDlgItem(hwnd, ID_PB_MAIN);
@@ -122,7 +151,7 @@ int WINAPI WinMain(HINSTANCE hi, HINSTANCE hp, LPSTR cl, int cs) {
   wc.lpfnWndProc = mainWndProc;
   wc.hInstance = hi;
   wc.hCursor = (HCURSOR)LoadImage(NULL, IDC_ARROW, IMAGE_CURSOR, 0, 0, LR_SHARED);
-  wc.lpszClassName = C_STR_CLASS_MAIN;
+  wc.lpszClassName = C_STR_APPNAME;
   wc.hbrBackground = (HBRUSH)(COLOR_BACKGROUND + 1);
   wc.hbrBackground = (HBRUSH)(COLOR_MENU + 1);
   wc.lpszMenuName = MAKEINTRESOURCE(ID_MNU_MAIN);
