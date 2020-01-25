@@ -12,7 +12,6 @@ void registerHotkeys() {
   Hotkey.assign(C_CMD_NEW, 'N', C_KBD_CTRL);
   Hotkey.assign(C_CMD_SAVEAS, 'E', C_KBD_CTRL);
   Hotkey.assign(C_CMD_AWAKEN, 'A', C_KBD_CTRL);
-  Hotkey.assign(C_CMD_STOP, VK_RETURN, 0);
 }
 
 void modifyMenu(HMENU menu, WORD lang) {
@@ -29,18 +28,34 @@ void modifyMenu(HMENU menu, WORD lang) {
   setMenuText(menu, C_CMD_MANUAL, lang);
 }
 
-BOOL CALLBACK winproc1(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp) {
+BOOL CALLBACK optProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp) {
   switch (msg) {
   case WM_INITDIALOG: {
-    HWND probar = GetDlgItem(hwnd, ID_PB_MAIN);
-    SendMessage(probar, PBM_SETRANGE, 0, MAKELPARAM(0, 100));
-    SendMessage(probar, PBM_SETSTEP, 10, 0);
-    SendMessage(probar, PBM_STEPIT, 0, 0);
+    HWND times = GetDlgItem(hwnd, ID_EDIT_TIME);
+    SendMessage(times, CB_ADDSTRING, 0, (LPARAM)L"3:00");
+    SendMessage(times, CB_ADDSTRING, 0, (LPARAM)L"5:00");
+    SendMessage(times, CB_ADDSTRING, 0, (LPARAM)L"2:00:00");
+    SendMessage(times, CB_ADDSTRING, 0, (LPARAM)L"2:30:00");
+    SendMessage(times, CB_ADDSTRING, 0, (LPARAM)L"3:00:00");
+    SetDlgItemText(hwnd, ID_EDIT_TIME, L"2:00:00");
+    HWND tasks = GetDlgItem(hwnd, ID_EDIT_TASK);
+    SendMessage(tasks, CB_ADDSTRING, 0, (LPARAM)L"スリープ");
+    SendMessage(tasks, CB_ADDSTRING, 0, (LPARAM)L"休止状態");
+    SendMessage(tasks, CB_ADDSTRING, 0, (LPARAM)L"ディスプレイの電源を切る");
+    SendMessage(tasks, CB_SETCURSEL, 0, 0);
+    HWND awdisp = GetDlgItem(hwnd, ID_EDIT_AWDISP);
+    SendMessage(awdisp, CB_ADDSTRING, 0, (LPARAM)L"自動");
+    SendMessage(awdisp, CB_ADDSTRING, 0, (LPARAM)L"抑止する");
+    SendMessage(awdisp, CB_SETCURSEL, 0, 0);
+    HWND awsys = GetDlgItem(hwnd, ID_EDIT_AWSYS);
+    SendMessage(awsys, CB_ADDSTRING, 0, (LPARAM)L"自動");
+    SendMessage(awsys, CB_ADDSTRING, 0, (LPARAM)L"抑止する");
+    SendMessage(awsys, CB_SETCURSEL, 1, 0);
     return 1;
   }
   case WM_COMMAND: {
     switch (LOWORD(wp)) {
-    case IDOK: MessageBox(hwnd,L"YES",0,0); EndDialog(hwnd, IDOK); break;
+    case IDOK: MessageBox(hwnd,L"設定が完了しました",0,0); EndDialog(hwnd, IDOK); break;
     case IDCANCEL: EndDialog(hwnd, IDCANCEL); break;
     }
     return 1;
@@ -81,9 +96,9 @@ static HMENU pop1;
       ctx = GetDlgItem(hwnd, ID_TXT_MISSION);
       font = CreateFont(12, 0, 0, 0, 0, 0, 0, 0, DEFAULT_CHARSET, 0, 0, 0, FIXED_PITCH, L"MS Shell Dlg");
       SendMessage(ctx, WM_SETFONT, (WPARAM)font, TRUE);
-      SetWindowText(ctx, L"コンピュータを眠らせます");
+      SetWindowText(ctx, L"");
       // icons
-      font = CreateFont(29, 0, 0, 0, 0, 0, 0, 0, DEFAULT_CHARSET, 0, 0, 0, FIXED_PITCH, L"MS Shell Dlg");
+      font = CreateFont(29, 0, 0, 0, 0, 0, 0, 0, DEFAULT_CHARSET, 0, 0, 0, FIXED_PITCH, L"Segoe UI Emoji");
       ctx = GetDlgItem(hwnd, ID_ICO_MISSION);
       SendMessage(ctx, WM_SETFONT, (WPARAM)font, TRUE);
       ctx = GetDlgItem(hwnd, ID_ICO_AWAKEN);
@@ -98,11 +113,16 @@ static HMENU pop1;
       SendMessage(probar, PBM_SETSTEP, -1000, 0);
       SendMessage(probar, PBM_SETPOS, SendMessage(probar, PBM_GETRANGE, FALSE, NULL), 0);
       mmmm = TRUE;
+PostMessage(hwnd, WM_COMMAND, C_CMD_NEW, 0);
     }
     return 0;
   }
   case WM_COMMAND: {
     switch (LOWORD(wp)) {
+    case C_CMD_NEW: {
+      DialogBox(GetModuleHandle(NULL), MAKEINTRESOURCE(ID_DLG_OPTION), hwnd, optProc);
+      break;
+    }
     case C_CMD_STOP: MessageBox(hwnd, L"停止", 0, 0); break;
     case C_CMD_AWAKEN: MessageBox(hwnd, L"目覚め", 0, 0); break;
     case C_CMD_EXIT: MessageBox(hwnd,L"終了?",0,1)==1&&DestroyWindow(hwnd); break;
@@ -110,9 +130,6 @@ static HMENU pop1;
     }
     HWND probar = GetDlgItem(hwnd, ID_PB_MAIN);
     SendMessage(probar, PBM_STEPIT, 0, 0);
-    return 0;
-  }
-  case WM_LBUTTONUP: {
     return 0;
   }
   case WM_PAINT: {
