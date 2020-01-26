@@ -121,10 +121,13 @@ void setMenuText(HMENU menu, WORD id, WORD lang, int pos = 0) {
   });
 }
 
-void getLocaleString(LPTSTR fulltext, WORD id, WORD lang) {
+LPTSTR getLocaleString(LPTSTR fulltext, WORD id, WORD lang) {
   SIZE_T size = C_MAX_MSGTEXT;
   int res = LoadString(GetModuleHandle(NULL), lang | id, fulltext, size);
   if (!res) {
-    LoadString(GetModuleHandle(NULL), id, fulltext, size);
+    if (!LoadString(GetModuleHandle(NULL), id, fulltext, size)) {
+      lstrcpyn(fulltext, TEXT("---"), size);
+    }
   }
+  return fulltext;
 }
