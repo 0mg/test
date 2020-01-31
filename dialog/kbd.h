@@ -123,10 +123,11 @@ void setMenuText(HMENU menu, WORD id, WORD lang, int pos = 0) {
 
 LPTSTR getLocaleString(LPTSTR fulltext, WORD id, WORD lang) {
   SIZE_T size = C_MAX_MSGTEXT;
-  int res = LoadString(GetModuleHandle(NULL), lang | id, fulltext, size);
-  if (!res) {
-    if (!LoadString(GetModuleHandle(NULL), id, fulltext, size)) {
-      lstrcpyn(fulltext, TEXT("---"), size);
+  HINSTANCE hi = GetModuleHandle(NULL);
+  if (!LoadString(hi, lang | id, fulltext, size)) {
+    // fulltext is "" now
+    if (!LoadString(hi, id, fulltext, size)) {
+      return NULL;
     }
   }
   return fulltext;
