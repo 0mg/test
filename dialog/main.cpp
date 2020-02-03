@@ -240,7 +240,6 @@ LRESULT CALLBACK mainWndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp) {
   static HWND probar, timeview, taskicon, dispicon, sysicon, exticon;
   static HMENU menubar;
   static HFONT timefont, iconfont;
-  static BOOL initialized = FALSE;
   // # count down
   if (counting) {
     atimer.rest = atimer.out - (GetTickCount64() - stime);
@@ -275,8 +274,7 @@ LRESULT CALLBACK mainWndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp) {
     iconfont = CreateFont(28, 0, 0, 0, 0, 0, 0, 0, DEFAULT_CHARSET, 0, 0, 0, FIXED_PITCH, L"MS Shell Dlg");
     return 0;
   }
-  case WM_SHOWWINDOW: {
-    if (initialized) return 0;
+  case WM_INITDIALOG: {
     // # Init vars
     probar = GetDlgItem(hwnd, ID_PB_MAIN);
     timeview = GetDlgItem(hwnd, ID_TXT_TIMER);
@@ -299,7 +297,6 @@ LRESULT CALLBACK mainWndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp) {
     } else {
       SendMessage(hwnd, WM_COMMAND, C_CMD_STOP, 0);
     }
-    initialized = TRUE;
     return 0;
   }
   case WM_COMMAND: {
@@ -508,13 +505,14 @@ int WINAPI WinMain(HINSTANCE hi, HINSTANCE hp, LPSTR cl, int cs) {
   wc.lpfnWndProc = mainWndProc;
   wc.hInstance = GetModuleHandle(NULL);
   wc.hCursor = (HCURSOR)LoadImage(NULL, IDC_ARROW, IMAGE_CURSOR, 0, 0, LR_SHARED);
+  wc.hIcon = (HICON)LoadImage(hi, MAKEINTRESOURCE(ID_ICO_EXE), IMAGE_ICON, 0, 0, 0);
+  wc.hIconSm = (HICON)LoadImage(hi, MAKEINTRESOURCE(ID_ICO_EXE), IMAGE_ICON, 0, 0, 0);
   wc.lpszClassName = C_VAL_APPNAME;
-  wc.hbrBackground = (HBRUSH)(COLOR_BACKGROUND + 1);
   wc.hbrBackground = (HBRUSH)(COLOR_MENU + 1);
   RegisterClassEx(&wc);
 
   // Main Window: Create, Show
-  HWND hwnd = CreateDialog(hi, MAKEINTRESOURCE(ID_DLG_MAIN), 0, NULL);
+  HWND hwnd = CreateDialog(hi, MAKEINTRESOURCE(ID_DLG_MAIN), 0, (DLGPROC)wc.lpfnWndProc);
   // WinMain() must return 0 before msg loop
   if (hwnd == NULL) { popError(); return 0; }
 

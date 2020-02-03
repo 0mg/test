@@ -8,6 +8,8 @@
 #define C_VAL_APPVER    1,0,0,0
 #define C_VAL_APPCODE   "nemtimer"
 
+#define ID_ICO_EXE      0x001
+
 // controls ID
 #define ID_DLG_MAIN     0xC01
 #define ID_DLG_OPTION   0xC02

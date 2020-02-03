@@ -17,6 +17,8 @@ FILETYPE VFT_APP {
   }
 }
 
+ID_ICO_EXE ICON "main.ico"
+
 ID_DLG_MAIN DIALOG 0, 0, 200, 152
 FONT 9, "MS Shell Dlg"
 STYLE WS_SYSMENU | WS_MINIMIZEBOX | WS_VISIBLE | DS_CENTER
@@ -60,7 +62,7 @@ ID_MNU_MAIN MENU {
 }
 
 ID_DLG_OPTION DIALOG 0, 0, 300, 250
-STYLE WS_SYSMENU | WS_VISIBLE | DS_CENTER
+STYLE WS_SYSMENU | WS_VISIBLE | DS_CENTER | DS_MODALFRAME
 CAPTION "New timer"
 FONT 9, "MS Shell Dlg"
 {
@@ -68,10 +70,10 @@ FONT 9, "MS Shell Dlg"
   LTEXT "The device will sleep on the time rest is out.", ID_DESC_TIME, 20, 25, 265, 10
   RTEXT "&Time rest:", ID_CAP_TIME, 20, 40, 85, 10
   COMBOBOX ID_EDIT_TIME, 110, 38, 70, 100, CBS_DROPDOWN | WS_TABSTOP
-  LTEXT "By environment, sleep is not available, or device enter hibernation on the time out. It able to change the operation.", ID_DESC_TASK, 20, 60, 265, 30
+  LTEXT "By environment, sleep could not be available, or device could to enter hibernation on the time out. It able to change the operation.", ID_DESC_TASK, 20, 60, 265, 30
   RTEXT "&Operation:", ID_CAP_TASK, 20, 85, 85, 10
   COMBOBOX ID_EDIT_TASK, 110, 83, 100, 100, CBS_DROPDOWNLIST | WS_TABSTOP
-  AUTOCHECKBOX "Disable auto-&resume of sleeping", ID_CHK_TASK, 110, 102, 120, 10
+  AUTOCHECKBOX "Disable auto-&resume from sleeping", ID_CHK_TASK, 110, 102, 120, 10
   GROUPBOX "Option", ID_GP_AWAKE, 10, 125, 280, 95
   LTEXT "System may shut off display or enter sleep in the idle time. It able to supress them.", ID_DESC_AWAKE, 20, 140, 265, 30
   RTEXT "Shut off &display:", ID_CAP_AWDISP, 20, 165, 85, 10
@@ -114,7 +116,7 @@ STRINGTABLE {
   C_LANG_JA | ID_CAP_TIME "待機時間(&T):"
   C_LANG_JA | ID_DESC_TASK "環境によっては、スリープが利用できない場合や、スリープ状態ではなく休止状態に移行してしまう場合があります。次の項目で、実行内容の変更ができます。"
   C_LANG_JA | ID_CAP_TASK "実行内容(&O):"
-  C_LANG_JA | ID_CHK_TASK "スリープ中の自動復帰を無効にする(&R)"
+  C_LANG_JA | ID_CHK_TASK "スリープからの自動復帰を無効にする(&R)"
   C_LANG_JA | ID_GP_AWAKE "オプション"
   C_LANG_JA | ID_DESC_AWAKE "システムは、アイドル状態になってから一定時間が経過すると、自動でディスプレイの電源を切ったり、スリープ状態に移行したりすることがあります。次の項目で、それらを抑止できます。"
   C_LANG_JA | ID_CAP_AWDISP "ディスプレイの電源を切る(&D):"
